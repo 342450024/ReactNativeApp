@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
 
 });
-=======
+
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -99,4 +99,3 @@ const styles = StyleSheet.create({
   },
 
 });
->>>>>>> before discard
