@@ -30,7 +30,7 @@ export default class App extends Component<Props> {
   render() {
 
 
-    return (12
+    return (1233
 <View style={styles.container}>
       <View style={styles.container}>
 
