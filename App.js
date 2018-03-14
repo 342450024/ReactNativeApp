@@ -31,7 +31,6 @@ export default class App extends Component<Props> {
 
 
     return (
-      223
 <View style={styles.container}>
       <View style={styles.container}>
 
