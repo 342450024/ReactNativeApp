@@ -27,7 +27,7 @@ type Props = {};
 
 
 export default class App extends Component<Props> {
-  render() {22
+  render() {
 
 
     return (

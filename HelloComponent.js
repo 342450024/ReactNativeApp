@@ -18,7 +18,7 @@ export default class HelloComponent extends Component{
     return (
         <Text style={{fontSize:20,backgroundColor:'red'}}>
           Welcome!
-        </Text>1315222254446
+        </Text>
     );
   }
 }
