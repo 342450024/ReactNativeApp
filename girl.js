@@ -13,7 +13,7 @@ import {
 
 
 
-export default class HelloComponent extends Component{
+export default class girl extends Component{
   render() {
     return (
         <Text style={{fontSize:20,backgroundColor:'red'}}>
