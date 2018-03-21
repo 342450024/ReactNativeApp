@@ -15,9 +15,9 @@ import {
   Alert,
   Image,
   StatusBar,
-  Navigator
 } from 'react-native';
-// import HelloComponent from './HelloComponent';
+import {Navigator} from 'react-native-deprecated-custom-components';
+import boy from './boy';
 import TabNavigator from 'react-native-tab-navigator';
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -80,7 +80,15 @@ export default class App extends Component<Props> {
  </TabNavigator.Item>
 </TabNavigator>*/}
 
-
+      <Navigator
+       initialRoute={{
+          component:boy
+       }}
+        renderScene={(route,navigator)=>{
+          let Component = route.component;
+          return <Component navigator={navigator} {...route.params}/>
+        }}
+      />
       </View>
 
     );
