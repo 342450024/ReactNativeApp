@@ -7,7 +7,6 @@
 
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   View,
@@ -16,22 +15,13 @@ import {
   Image,
   StatusBar,
 } from 'react-native';
-import FlatListText from './FlatListText';
-import FetchTest from './FetchTest';
 import {Navigator} from 'react-native-deprecated-custom-components';
-import boy from './boy';
 import TabNavigator from 'react-native-tab-navigator';
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-type Props = {};
 
 
-export default class App extends Component<Props> {
+
+
+export default class HomePage extends Component{
   constructor(props){
     super(props);
     this.state = {
@@ -43,13 +33,13 @@ export default class App extends Component<Props> {
     return (
 
       <View style={styles.container}>
-      {/*<TabNavigator>
+      <TabNavigator>
  <TabNavigator.Item
    selected={this.state.selectedTab === '图书'}
    selectedTitleStyle={{color:'pink'}}
    title="图书"
-   renderIcon={() => <Image style={styles.image} source={require('./res/images/ic_polular.png')} />}
-   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('./res/images/ic_polular.png')} />}
+   renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_polular.png')} />}
+   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_polular.png')} />}
    onPress={() => this.setState({ selectedTab: '图书' })}>
   <View style={styles.page1}></View>
  </TabNavigator.Item>
@@ -57,8 +47,8 @@ export default class App extends Component<Props> {
    selected={this.state.selectedTab === '电影'}
    selectedTitleStyle={{color:'pink'}}
    title="电影"
-   renderIcon={() => <Image style={styles.image} source={require('./res/images/ic_computer.png')} />}
-   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('./res/images/ic_computer.png')} />}
+   renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_computer.png')} />}
+   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_computer.png')} />}
    onPress={() => this.setState({ selectedTab: '电影' })}>
     <View style={styles.page2}></View>
  </TabNavigator.Item>
@@ -66,8 +56,8 @@ export default class App extends Component<Props> {
    selected={this.state.selectedTab === '音乐'}
    selectedTitleStyle={{color:'pink'}}
    title="音乐"
-   renderIcon={() => <Image style={styles.image} source={require('./res/images/ic_unstar_navbar.png')} />}
-   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('./res/images/ic_unstar_navbar.png')} />}
+   renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_unstar_navbar.png')} />}
+   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_unstar_navbar.png')} />}
    onPress={() => this.setState({ selectedTab: '音乐' })}>
     <View style={styles.page3}></View>
  </TabNavigator.Item>
@@ -75,23 +65,14 @@ export default class App extends Component<Props> {
    selected={this.state.selectedTab === '我的'}
    selectedTitleStyle={{color:'pink'}}
    title="我的"
-   renderIcon={() => <Image style={styles.image} source={require('./res/images/ic_my.png')} />}
-   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('./res/images/ic_my.png')} />}
+   renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_my.png')} />}
+   renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_my.png')} />}
    onPress={() => this.setState({ selectedTab: '我的' })}>
     <View style={styles.page4}></View>
  </TabNavigator.Item>
 </TabNavigator>
 
-      <Navigator
-       initialRoute={{
-          component:boy
-       }}
-        renderScene={(route,navigator)=>{
-          let Component = route.component;
-          return <Component navigator={navigator} {...route.params}/>
-        }}
-      />*/}
-      <FetchTest/>
+
       </View>
 
     );
