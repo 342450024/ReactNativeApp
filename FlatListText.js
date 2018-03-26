@@ -14,7 +14,7 @@ import {
   FlatList,
   Button
 } from 'react-native';
-import NavigationBar from './NavigationBar';
+import NavigationBar from './js/common/NavigationBar';
 var ITEM_HEIGHT = 80;
 
 export default class FlatListText extends Component{

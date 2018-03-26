@@ -19,7 +19,6 @@ import {
 import FlatListText from './FlatListText';
 import FetchTest from './FetchTest';
 import {Navigator} from 'react-native-deprecated-custom-components';
-import boy from './boy';
 import TabNavigator from 'react-native-tab-navigator';
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -91,7 +90,7 @@ export default class App extends Component<Props> {
           return <Component navigator={navigator} {...route.params}/>
         }}
       />*/}
-      <FetchTest/>
+      <FlatListText/>
       </View>
 
     );

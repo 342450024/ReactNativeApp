@@ -5,9 +5,9 @@ import {
   View,
 } from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
-import WelcomePage from './WelcomePage'
+import WelcomePage from './WelcomePage';
 
-function setup(){
+function Setup(){
   //进行一些初始化的配置
   class Root extends Component{
     renderScene(route,navigator){
@@ -23,4 +23,4 @@ function setup(){
   }
   return <Root/>
 }
-module.export=setup;
+module.exports=Setup;

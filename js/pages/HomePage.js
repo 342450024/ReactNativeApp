@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
 import TabNavigator from 'react-native-tab-navigator';
+import PopularPage from './PopularPage';
 
 
 
@@ -41,7 +42,7 @@ export default class HomePage extends Component{
    renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_polular.png')} />}
    renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_polular.png')} />}
    onPress={() => this.setState({ selectedTab: '图书' })}>
-  <View style={styles.page1}></View>
+  <PopularPage/>
  </TabNavigator.Item>
  <TabNavigator.Item
    selected={this.state.selectedTab === '电影'}

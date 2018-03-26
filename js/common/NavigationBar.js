@@ -63,7 +63,7 @@ export default class NavigationBar extends Component{
 
 const styles = StyleSheet.create({
   container:{
-
+     backgroundColor:'#2196F3'
   },
   navBar:{
     justifyContent:'space-between',
