@@ -43,6 +43,9 @@ export default class WelcomePage extends Component {
     return <View style={styles.container}>
     <NavigationBar
         title={'最热'}
+        statusBar={{
+          backgroundColor:'#2196F3'
+        }}
 
     />
     {/*<Text
@@ -85,8 +88,11 @@ class PopularPage extends Component {
   componentDidMount(){
     this.loadData();
   }
-  loadData(){
-     this.setState({isFetching: true});
+  //用箭头函数，在组件中可以直接调用
+    loadData = () => {
+    this.setState({
+      isFetching: true
+    })
      let url = URL+this.props.tabLabel+QUERY_STR;
      this.dataRepository.fetchNetRepository(url)
          .then(result=>{
@@ -104,7 +110,7 @@ class PopularPage extends Component {
   }
 
   render(){
-    return <View>
+    return <View style={styles.container}>
     <FlatList
     ref={(flatList)=>this._flatList = flatList}
     keyExtractor={(item, index) => index}

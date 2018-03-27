@@ -15,9 +15,11 @@ import {
   Image,
   StatusBar,
 } from 'react-native';
-import {Navigator} from 'react-native-deprecated-custom-components';
+// import {Navigator} from 'react-native-deprecated-custom-components';
 import TabNavigator from 'react-native-tab-navigator';
 import PopularPage from './PopularPage';
+import MyPage from './my/MyPage';
+
 
 
 
@@ -69,7 +71,7 @@ export default class HomePage extends Component{
    renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_my.png')} />}
    renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_my.png')} />}
    onPress={() => this.setState({ selectedTab: '我的' })}>
-    <View style={styles.page4}></View>
+    <MyPage {...this.props}/>
  </TabNavigator.Item>
 </TabNavigator>
 
