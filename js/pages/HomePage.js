@@ -14,16 +14,15 @@ import {
   Alert,
   Image,
   StatusBar,
+  DeviceEventEmitter
 } from 'react-native';
 // import {Navigator} from 'react-native-deprecated-custom-components';
 import TabNavigator from 'react-native-tab-navigator';
 import PopularPage from './PopularPage';
 import MyPage from './my/MyPage';
-
-
-
-
-
+import Toast,{DURATION} from 'react-native-easy-toast';
+import WebViewDetail from './WebViewDetail';
+import TrendingText from '../../TrendingText';
 export default class HomePage extends Component{
   constructor(props){
     super(props);
@@ -31,6 +30,14 @@ export default class HomePage extends Component{
       selectedTab:"图书"
     }
   }
+ componentDidMount(){
+   this.listener=DeviceEventEmitter.addListener('showToast',(text)=>{
+     this.toast.show(text,DURATION.LENGTH_LONG);
+   })
+ }
+ componentWillUnmount(){
+   this.listener&&this.listener.remove();
+ }
   render() {
 
     return (
@@ -44,7 +51,7 @@ export default class HomePage extends Component{
    renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_polular.png')} />}
    renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_polular.png')} />}
    onPress={() => this.setState({ selectedTab: '图书' })}>
-  <PopularPage/>
+  <PopularPage {...this.props}/>
  </TabNavigator.Item>
  <TabNavigator.Item
    selected={this.state.selectedTab === '电影'}
@@ -62,7 +69,8 @@ export default class HomePage extends Component{
    renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_unstar_navbar.png')} />}
    renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_unstar_navbar.png')} />}
    onPress={() => this.setState({ selectedTab: '音乐' })}>
-    <View style={styles.page3}></View>
+    {/*<View style={styles.page3}></View>*/}
+    <TrendingText/>
  </TabNavigator.Item>
  <TabNavigator.Item
    selected={this.state.selectedTab === '我的'}
@@ -75,7 +83,7 @@ export default class HomePage extends Component{
  </TabNavigator.Item>
 </TabNavigator>
 
-
+ <Toast ref={toast=>this.toast=toast}/>
       </View>
 
     );

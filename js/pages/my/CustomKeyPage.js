@@ -19,6 +19,7 @@ export default class CustomKeyPage extends Component {
      super(props);
      this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
      this.chanageValues = [];
+     this.isRemoveKey = this.props.isRemoveKey?true:false;
      this.state={
        dataArray:[]
      }
@@ -41,6 +42,11 @@ export default class CustomKeyPage extends Component {
     if(this.chanageValues.length === 0){
       this.props.navigator.pop();
       return;
+    }
+    if(this.isRemoveKey){
+      for(let i in this.chanageValues){
+        ArrayUtils.remove(this.state.dataArray,this.chanageValues[i]);
+      }
     }
     this.languageDao.save(this.state.dataArray);
     this.props.navigator.pop();
@@ -78,17 +84,18 @@ export default class CustomKeyPage extends Component {
  return views;
   }
   onClick(data){
-   data.checked=!data.checked;
+   if(!this.isRemoveKey)data.checked=!data.checked;
    ArrayUtils.updateArray(this.chanageValues,data);
   }
   renderCheckBox(data){
     let leftText = data.name;
+    let isChecked = this.isRemoveKey?false:data.checked;
     return(
       <CheckBox
        style={{padding:10,flex:1}}
         onClick={()=>this.onClick(data)}
         leftText={leftText}
-        isChecked={data.checked}
+        isChecked={isChecked}
         unCheckedImage={<Image style={{tintColor:'#2196F3'}} source={require('./img/ic_check_box_outline_blank.png')}/>}
         CheckedImage={<Image style={{tintColor:'#2196F3'}} source={require('./img/ic_check_box.png')}/>}
 
@@ -96,16 +103,18 @@ export default class CustomKeyPage extends Component {
     )
   }
   render(){
+    let title = this.isRemoveKey?'删除标签':'自定义标签页';
+    let rightText = this.isRemoveKey?'删除':'保存';
     let rightButton=<TouchableOpacity
           onPress={()=>{this.onSave()}}
         >
          <View style={{margin:10}}>
-              <Text style={styles.title}>保存</Text>
+              <Text style={styles.title}>{rightText}</Text>
          </View>
     </TouchableOpacity>
     return <View style={styles.container}>
     <NavigationBar
-        title={'自定义标签页'}
+        title={title}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
         rightButton={rightButton}
     />

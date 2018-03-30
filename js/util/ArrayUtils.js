@@ -34,5 +34,14 @@ export default class ArrayUtils{
      }
      return true;
    }
+   /*
+   将数组中指定元素移除
+   */
+   static remove(arr,item){
+     if(!arr)return;
+     for(let i=0,l=arr.length;i<l;i++){
+       if(item===arr[i])arr.splice(i,1);
+     }
+   }
 
 }

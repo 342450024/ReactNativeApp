@@ -4,7 +4,8 @@ import {
   Text,
   View,
   TextInput,
-  FlatList
+  FlatList,
+  DeviceEventEmitter
 } from 'react-native';
 import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import {Navigator} from 'react-native-deprecated-custom-components';
@@ -13,6 +14,7 @@ import RepositoryCell from '../common/RepositoryCell'
 import HomePage from './HomePage'
 import DataRepository from '../expand/dao/DataRepository'
 import LanguageDao,{FLAG_LANGUAGE} from "../expand/dao/LanguageDao"
+import WebViewDetail from './WebViewDetail'
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 export default class PopularPage extends Component {
@@ -47,7 +49,7 @@ export default class PopularPage extends Component {
     renderTabBar={()=><ScrollableTabBar/>}>
     {this.state.languages.map((result,i,arr)=>{
       let lan = arr[i];
-      return lan.checked?<PopularSon key={i} tabLabel={lan.name}></PopularSon>:null;
+      return lan.checked?<PopularSon key={i} tabLabel={lan.name} {...this.props}></PopularSon>:null;
     })}
       </ScrollableTabView>:null;
 
@@ -82,12 +84,29 @@ class PopularSon extends Component {
       isFetching: true
     })
      let url = URL+this.props.tabLabel+QUERY_STR;
-     this.dataRepository.fetchNetRepository(url)
+     this.dataRepository
+         .fetchRepository(url)
          .then(result=>{
+           let items = result&&result.items?result.items:result?result:[];
            this.setState({
-             sourceData:result.items,
+             sourceData:items,
              isFetching: false
-           })
+           });
+
+           if(result&&result.update_date&&!this.dataRepository.checkData(result.update_date)){
+             DeviceEventEmitter.emit('showToast','数据过时');
+             return this.dataRepository.fetchNetRepository(url);
+           }else{
+             DeviceEventEmitter.emit('showToast','显示缓存数据');
+           }
+         })
+         .then(items=>{
+           if(!items||items.length === 0) return;
+           this.setState({
+             sourceData:items,
+             isFetching: false
+           });
+           DeviceEventEmitter.emit('showToast','显示网络数据');
          })
          .catch(error=>{
            this.setState({
@@ -96,13 +115,21 @@ class PopularSon extends Component {
            })
          })
   }
-
+  onSelect(item){
+    this.props.navigator.push({
+      component:WebViewDetail,
+      params:{
+        item:item.item,
+        ...this.props
+      }
+    })
+  }
   render(){
     return <View style={styles.container}>
     <FlatList
     ref={(flatList)=>this._flatList = flatList}
     keyExtractor={(item, index) => index}
-    renderItem={(item)=><RepositoryCell item={item.item}/>}
+    renderItem={(item)=><RepositoryCell item={item.item} {...this.props} onSelect={()=>this.onSelect(item)}/>}
     onRefresh={this.loadData}
     refreshing={this.state.isFetching}
     data={this.state.sourceData}

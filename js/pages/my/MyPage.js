@@ -34,6 +34,18 @@ export default class MyPage extends Component {
       })
     }}
     >进入排序</Text>
+
+    <Text
+    onPress={()=>{
+      this.props.navigator.push({
+        component:CustomKeyPage,
+        params:{
+          ...this.props,
+          isRemoveKey:true
+        }
+      })
+    }}
+    >删除标签</Text>
     </View>
   }
 }
