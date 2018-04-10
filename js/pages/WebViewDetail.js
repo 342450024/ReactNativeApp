@@ -3,26 +3,35 @@ import {
   StyleSheet,
   Text,
   View,
-  WebView
+  WebView,
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../common/NavigationBar'
 import ViewUtils from '../util/ViewUtils'
+const TRENDING_URL = 'https://github.com/';
 const URL = 'https://www.baidu.com/';
+import FavoriteDao from "../expand/dao/FavoriteDao"
+
 export default class WebViewDetail extends Component {
   constructor(props){
     super(props);
-    this.url = this.props.item.html_url;
-    let title = this.props.item.full_name;
+    this.url = this.props.item.item.html_url?this.props.item.item.html_url:TRENDING_URL+this.props.item.item.fullName;
+    let title = this.props.item.item.full_name?this.props.item.item.full_name:this.props.item.item.fullName;
+    this.favoriteDao = new FavoriteDao(this.props.flag);
     this.state = {
       url:this.url,
       canGoBack:false,
-      title:title
+      title:title,
+      isFavorite:this.props.item.isFavorite,
+      favoriteIcon:this.props.item.isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_star_navbar.png')
     }
   }
   componentDidMount(){
-
+     alert(this.props.item.isFavorite)
   }
+
   onBack(){
    if(this.state.canGoBack){
      this.webView.goBack();
@@ -37,12 +46,39 @@ export default class WebViewDetail extends Component {
     loading: navState.loading,
   });
 }
+setFavoriteState(isFavorite){
+  this.setState({
+    isFavorite:isFavorite,
+    favoriteIcon:isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_star_navbar.png')
+  })
+}
+onRightButtonClick(){
+  var Item = this.props.item;
+  this.setFavoriteState(Item.isFavorite=!Item.isFavorite);
+  var key = Item.item.id?Item.item.id.toString():Item.item.fullName;
+  if(Item.isFavorite){
+    this.favoriteDao.saveFavoriteItem(key,JSON.stringify(Item.item));
+  }else{
+    this.favoriteDao.removeFavoriteItem(key);
+  }
+}
+renderRightButton(){
+  return <TouchableOpacity
+        onPress={()=>this.onRightButtonClick()}
+  >
+        <Image
+            style={{width:20,height:20,marginRight:10}}
+            source={this.state.favoriteIcon}
+        />
+        </TouchableOpacity>
+}
   render(){
 
     return <View style={styles.container}>
     <NavigationBar
         title={this.state.title}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
+        rightButton={this.renderRightButton()}
     />
     <WebView
     ref={webView=>this.webView=webView}

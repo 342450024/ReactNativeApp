@@ -22,7 +22,8 @@ import PopularPage from './PopularPage';
 import MyPage from './my/MyPage';
 import Toast,{DURATION} from 'react-native-easy-toast';
 import WebViewDetail from './WebViewDetail';
-import TrendingText from '../../TrendingText';
+import TrendingPage from './TrendingPage';
+import FavoritePage from './FavoritePage';
 export default class HomePage extends Component{
   constructor(props){
     super(props);
@@ -60,7 +61,7 @@ export default class HomePage extends Component{
    renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_computer.png')} />}
    renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_computer.png')} />}
    onPress={() => this.setState({ selectedTab: '电影' })}>
-    <View style={styles.page2}></View>
+    <TrendingPage {...this.props}/>
  </TabNavigator.Item>
  <TabNavigator.Item
    selected={this.state.selectedTab === '音乐'}
@@ -69,8 +70,8 @@ export default class HomePage extends Component{
    renderIcon={() => <Image style={styles.image} source={require('../../res/images/ic_unstar_navbar.png')} />}
    renderSelectedIcon={() => <Image style={[styles.image,{tintColor:'pink'}]} source={require('../../res/images/ic_unstar_navbar.png')} />}
    onPress={() => this.setState({ selectedTab: '音乐' })}>
-    {/*<View style={styles.page3}></View>*/}
-    <TrendingText/>
+    <FavoritePage {...this.props}/>
+
  </TabNavigator.Item>
  <TabNavigator.Item
    selected={this.state.selectedTab === '我的'}

@@ -5,31 +5,43 @@ import {
   View,
   TextInput,
   FlatList,
-  DeviceEventEmitter
+  Image,
+  DeviceEventEmitter,
+  TouchableOpacity
 } from 'react-native';
 import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../common/NavigationBar'
-import RepositoryCell from '../common/RepositoryCell'
+import TrendingCell from '../common/TrendingCell'
 import DataRepository,{FLAG_STORAGE} from '../expand/dao/DataRepository'
 import LanguageDao,{FLAG_LANGUAGE} from "../expand/dao/LanguageDao"
-import FavoriteDao from "../expand/dao/FavoriteDao"
 import WebViewDetail from './WebViewDetail'
+import TimeSpan from '../model/TimeSpan'
+import Popover from '../common/Popover'
+import FavoriteDao from "../expand/dao/FavoriteDao"
 import Utils from '../util/utils'
 import ProjectModel from '../model/ProjectModel'
-const URL = 'https://api.github.com/search/repositories?q=';
-const QUERY_STR = '&sort=stars';
-var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
-export default class PopularPage extends Component {
+var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
+const URL = 'https://github.com/trending/';
+var timeSpanTextArray = [
+  new TimeSpan('今 天','?since=daily')
+  ,new TimeSpan('本 周','?since=weekly')
+  ,new TimeSpan('本 月','?since=monthly')
+]
+export default class TrendingPage extends Component {
   constructor(props){
     super(props);
-    this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
+    this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language);
     this.state = {
-      languages:[]
+      languages:[],
+      isVisible: false,
+      buttonRect: {},
+      timeSpan:timeSpanTextArray[0]
     }
   }
   componentDidMount(){
     this.loadData();
+
   }
   loadData(){
     this.languageDao.fetch()
@@ -42,6 +54,36 @@ export default class PopularPage extends Component {
           console.log(error);
         })
   }
+  renderTitleview(){
+    return <View>
+          <TouchableOpacity ref='button' onPress={()=>this.showPopover()}>
+            <View style={styles.head}>
+              <Text style={{color:'#fff',fontSize:18}}>趋势</Text>
+              <Image style={{fontSize:20,marginLeft:5,tintColor:'#fff'}}source={require('../../res/images/ic_tiaozhuan_down.png')}/>
+            </View>
+          </TouchableOpacity>
+    </View>
+  }
+  showPopover() {
+    this.refs.button.measure((ox, oy, width, height, px, py) => {
+      this.setState({
+        isVisible: true,
+        buttonRect: {x: px, y: py, width: width, height: height}
+      });
+    });
+  }
+
+  closePopover() {
+    this.setState({isVisible: false});
+  }
+  //查询数据
+   onItemClick(timeSpan){
+     this.setState({
+       isVisible: false,
+       timeSpan:timeSpan
+     });
+
+   }
 
   render(){
     let content=this.state.languages.length>0?<ScrollableTabView
@@ -52,27 +94,48 @@ export default class PopularPage extends Component {
     renderTabBar={()=><ScrollableTabBar/>}>
     {this.state.languages.map((result,i,arr)=>{
       let lan = arr[i];
-      return lan.checked?<PopularSon key={i} tabLabel={lan.name} {...this.props}></PopularSon>:null;
+      return lan.checked?<TrendingSon key={i} tabLabel={lan.name} timeSpan={this.state.timeSpan} {...this.props}></TrendingSon>:null;
     })}
       </ScrollableTabView>:null;
 
 
     return <View style={styles.container}>
         <NavigationBar
-        title={'最热'}
+        titleView={this.renderTitleview()}
         statusBar={{
           backgroundColor:'#2196F3'
         }}/>
         {content}
+        <Popover
+               isVisible={this.state.isVisible}
+               fromRect={this.state.buttonRect}
+               placement="bottom"
+               onClose={()=>this.closePopover()}
+
+               contentStyle={{opacity:0.82,backgroundColor:'#343434'}}
+        >
+               <View style={{alignItems: 'center'}}>
+                   {timeSpanTextArray.map((result, i, arr) => {
+                       return <TouchableOpacity key={i} onPress={()=>this.onItemClick(arr[i])}>
+                           <Text
+                               style={{fontSize: 18,color:'white', padding: 8, fontWeight: '400'}}>
+                               {arr[i].showText}
+                           </Text>
+                       </TouchableOpacity>
+                   })
+                   }
+               </View>
+           </Popover>
+
     </View>
   }
 }
 
-class PopularSon extends Component {
+class TrendingSon extends Component {
   constructor(props) {
     super(props);
-    this.dataRepository = new DataRepository(FLAG_STORAGE.flag_popular);
-    this.isFavoriteChanged = false;
+    this.dataRepository = new DataRepository(FLAG_STORAGE.flag_trending);
+    this.isFavoriteChanged=false;
     this.state = {
       result:'',
       sourceData:'',
@@ -80,18 +143,23 @@ class PopularSon extends Component {
       favoriteKeys:[]
     }
   }
+
   componentDidMount(){
-    this.loadData();
-    this.listener=DeviceEventEmitter.addListener('favoriteChanged_popular',()=>{
+    this.loadData(this.props.timeSpan);
+    this.listener=DeviceEventEmitter.addListener('favoriteChanged_trending',()=>{
       this.isFavoriteChanged=true;
     })
   }
-  componentWillReceiveProps(){
-      if(this.isFavoriteChanged){
-        this.isFavoriteChanged = false;
-        this.getFavoriteKeys();
-      }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.timeSpan!==this.props.timeSpan){
+      this.loadData(nextProps.timeSpan)
+    }
+    if(this.isFavoriteChanged){
+      this.isFavoriteChanged = false;
+      this.getFavoriteKeys();
+    }
   }
+
   comonentWillUnmount(){
     if(this.listener){
       this.listener.remove();
@@ -99,6 +167,9 @@ class PopularSon extends Component {
   }
 
 
+
+
+  //收藏功能
   flushFavoriteState(){
     let projectModels=[];
     let items = this.items;
@@ -111,7 +182,6 @@ class PopularSon extends Component {
     })
 
   }
-
   getFavoriteKeys(){
     favoriteDao.getFavoriteKeys()
        .then(keys=>{
@@ -124,22 +194,28 @@ class PopularSon extends Component {
          this.flushFavoriteState();
        })
   }
+  getFetchUrl(timeSpan,category){
+    return URL + category + timeSpan.searchText;
+  }
   //更新用户收藏数据
   updateState(dic){
     if(!this)return;
     this.setState(dic);
   }
+
   //用箭头函数，在组件中可以直接调用
-    loadData = () => {
+    loadData = (timeSpan) => {
     this.setState({
       isFetching: true
     })
-     let url = URL+this.props.tabLabel+QUERY_STR;
+     let url = this.getFetchUrl(timeSpan,this.props.tabLabel);
      this.dataRepository
          .fetchRepository(url)
          .then(result=>{
            this.items = result&&result.items?result.items:result?result:[];
+
            this.getFavoriteKeys();
+
 
            if(result&&result.update_date&&!this.dataRepository.checkData(result.update_date)){
              DeviceEventEmitter.emit('showToast','数据过时');
@@ -166,7 +242,7 @@ class PopularSon extends Component {
       component:WebViewDetail,
       params:{
         item:item.item,
-        flag:FLAG_STORAGE.flag_popular,
+        flag:FLAG_STORAGE.flag_trending,
         ...this.props
       }
     })
@@ -175,22 +251,19 @@ class PopularSon extends Component {
    * favoriteIcon的单机回调
    */
   onFavorite(item,isFavorite){
-
-
     if(isFavorite){
-      favoriteDao.saveFavoriteItem(item.id.toString(),JSON.stringify(item));
+      favoriteDao.saveFavoriteItem(item.fullName,JSON.stringify(item));
     }else{
-      favoriteDao.removeFavoriteItem(item.id.toString());
+      favoriteDao.removeFavoriteItem(item.fullName);
     }
-
   }
   render(){
     return <View style={styles.container}>
     <FlatList
     ref={(flatList)=>this._flatList = flatList}
     keyExtractor={(item, index) => index}
-    renderItem={(item)=><RepositoryCell key={item.item.id} item={item.item} {...this.props} onSelect={()=>this.onSelect(item)} onFavorite={(item,isFavorite)=>this.onFavorite(item,isFavorite)}/>}
-    onRefresh={()=>this.loadData()}
+    renderItem={(item)=><TrendingCell item={item.item} {...this.props} onSelect={()=>this.onSelect(item)} onFavorite={(item,isFavorite)=>this.onFavorite(item,isFavorite)}/>}
+    onRefresh={()=>this.loadData(this.props.timeSpan)}
     refreshing={this.state.isFetching}
     data={this.state.sourceData}
     />
@@ -205,5 +278,10 @@ const styles = StyleSheet.create({
   },
   tips:{
     fontSize:29
+  },
+  head:{
+    flexDirection:'row',
+    alignItems:'center',
+    color:'#fff',
   }
 })

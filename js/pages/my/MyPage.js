@@ -4,10 +4,11 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Navigator} from 'react-native-deprecated-custom-components';
+
 import NavigationBar from '../../common/NavigationBar'
 import CustomKeyPage from './CustomKeyPage'
 import SortKeyPage from './SortKeyPage'
+import {FLAG_LANGUAGE} from '../../expand/dao/LanguageDao'
 export default class MyPage extends Component {
   // this.props.navigator.resetTo({
   //       component:HomePage
@@ -21,7 +22,10 @@ export default class MyPage extends Component {
     onPress={()=>{
       this.props.navigator.push({
         component:CustomKeyPage,
-        params:{...this.props}
+        params:{
+          ...this.props,
+          flag:FLAG_LANGUAGE.flag_key
+        }
       })
     }}
     >进入自定义标签页</Text>
@@ -29,11 +33,37 @@ export default class MyPage extends Component {
     <Text
     onPress={()=>{
       this.props.navigator.push({
-        component:SortKeyPage,
-        params:{...this.props}
+        component:CustomKeyPage,
+        params:{
+          ...this.props,
+          flag:FLAG_LANGUAGE.flag_language
+        }
       })
     }}
-    >进入排序</Text>
+    >自定义语言</Text>
+
+    <Text
+    onPress={()=>{
+      this.props.navigator.push({
+        component:SortKeyPage,
+        params:{
+          ...this.props,
+          flag:FLAG_LANGUAGE.flag_key
+        }
+      })
+    }}
+    >标签排序</Text>
+    <Text
+    onPress={()=>{
+      this.props.navigator.push({
+        component:SortKeyPage,
+        params:{
+          ...this.props,
+          flag:FLAG_LANGUAGE.flag_language
+        }
+      })
+    }}
+    >语言排序</Text>
 
     <Text
     onPress={()=>{

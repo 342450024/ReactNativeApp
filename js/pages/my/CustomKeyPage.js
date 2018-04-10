@@ -17,7 +17,7 @@ import ArrayUtils from '../../util/ArrayUtils';
 export default class CustomKeyPage extends Component {
   constructor(props){
      super(props);
-     this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
+     this.languageDao = new LanguageDao(this.props.flag);
      this.chanageValues = [];
      this.isRemoveKey = this.props.isRemoveKey?true:false;
      this.state={
@@ -97,7 +97,7 @@ export default class CustomKeyPage extends Component {
         leftText={leftText}
         isChecked={isChecked}
         unCheckedImage={<Image style={{tintColor:'#2196F3'}} source={require('./img/ic_check_box_outline_blank.png')}/>}
-        CheckedImage={<Image style={{tintColor:'#2196F3'}} source={require('./img/ic_check_box.png')}/>}
+        CheckedImage={<Image style={{tintColor:'#2196F9'}} source={require('./img/ic_check_box.png')}/>}
 
       />
     )
@@ -105,6 +105,7 @@ export default class CustomKeyPage extends Component {
   render(){
     let title = this.isRemoveKey?'删除标签':'自定义标签页';
     let rightText = this.isRemoveKey?'删除':'保存';
+    title = this.props.flag===FLAG_LANGUAGE.flag_language?'自定义语言':title;
     let rightButton=<TouchableOpacity
           onPress={()=>{this.onSave()}}
         >

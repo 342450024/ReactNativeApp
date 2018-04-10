@@ -7,55 +7,69 @@ import {
   TouchableOpacity
 } from 'react-native';
 import WebViewDetail from '../pages/WebViewDetail'
-export default class RepositoryCell extends Component{
-constructor(props){
-   super(props);
-   this.state = {
-     isFavorite:this.props.item.isFavorite,
-     favoriteIcon:require('../../res/images/ic_unstar_transparent.png')
-   }
-}
-onPressFavorite(){
-  this.setFavoriteState(!this.state.isFavorite);
-  this.props.onFavorite(this.props.item.item,!this.state.isFavorite);
-}
-setFavoriteState(isFavorite){
-  this.setState({
-    isFavorite:isFavorite,
-    favoriteIcon:isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_unstar_transparent.png')
-  })
-}
-componentWillReceiveProps(nextProps){
-   this.setFavoriteState(nextProps.item.isFavorite);
-}
+import HTMLView from 'react-native-htmlview'
+export default class TrendingCell extends Component{
+  constructor(props){
+     super(props);
+     this.state = {
+       isFavorite:this.props.item.isFavorite,
+       favoriteIcon:require('../../res/images/ic_unstar_transparent.png')
+     }
+  }
+  onPressFavorite(){
+    this.setFavoriteState(!this.state.isFavorite);
+    this.props.onFavorite(this.props.item.item,!this.state.isFavorite);
+  }
+  setFavoriteState(isFavorite){
+    this.setState({
+      isFavorite:isFavorite,
+      favoriteIcon:isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_unstar_transparent.png')
+    })
+  }
+  componentWillReceiveProps(nextProps){
+     this.setFavoriteState(nextProps.item.isFavorite);
+  }
 
 
   render(){
+    let description = '<p>'+this.props.item.item.description+'</p>';
     let favoriteButton=<TouchableOpacity
      onPress={()=>{this.onPressFavorite()}}
     >
       <Image style={[{width:20,height:20},{tintColor:'#2196f3'}]} source={this.state.favoriteIcon}/>
     </TouchableOpacity>
-
     return  <TouchableOpacity
     style={styles.container}
     onPress={this.props.onSelect}
     >
     <View style={styles.cell_container}>
-    <Text style={styles.title}>{this.props.item.item.full_name}</Text>
+    <Text style={styles.title}>{this.props.item.item.fullName}</Text>
     <Text style={styles.title}>{this.props.item.isFavorite?'11':'00'}</Text>
-    <Text style={styles.content}>{this.props.item.item.description}</Text>
+    <HTMLView
+       value={description}
+       onLinkPress={(url) => {}}
+       stylesheet={{
+         p:styles.content,
+         a:styles.content
+       }}
+    />
     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
         <View style={{flexDirection:'row',alignItems:'center'}}>
             <Text>作者：</Text>
-            <Image
-               style={{height:22,width:22}}
-               source={{uri:this.props.item.item.owner.avatar_url}}
-            />
+        {this.props.item.item.contributors.map((result,i,arr)=>{
+        return <Image
+         key={i}
+         style={{height:22,width:22}}
+         source={{uri:arr[i]}}
+        />;
+        })}
+
+
+
         </View>
         <View style={{flexDirection:'row',alignItems:'center'}}>
             <Text>点赞：</Text>
-            <Text>{this.props.item.item.stargazers_count}</Text>
+            <Text>{this.props.item.item.starCount}</Text>
         </View>
         {favoriteButton}
     </View>

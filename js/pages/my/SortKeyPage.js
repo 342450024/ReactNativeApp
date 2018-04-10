@@ -18,7 +18,7 @@ import LanguageDao,{FLAG_LANGUAGE} from "../../expand/dao/LanguageDao"
 export default class SortKeyPage extends Component {
   constructor(Props){
     super(Props);
-    this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
+    this.languageDao = new LanguageDao(this.props.flag);
     this.dataArray=[];
     this.sortResultArray=[];
     this.originalCheckedArray=[];
@@ -87,6 +87,7 @@ export default class SortKeyPage extends Component {
  }
   render(){
     let order = Object.keys(this.state.checkedArray);
+    let title = this.props.flag === FLAG_LANGUAGE.flag_language?'语言排序':'标签排序';
     let rightButton=<TouchableOpacity
           onPress={()=>{this.onSave()}}
         >
@@ -96,7 +97,7 @@ export default class SortKeyPage extends Component {
     </TouchableOpacity>
     return <View style={{flex:1}}>
     <NavigationBar
-        title={'排序'}
+        title={title}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
         rightButton={rightButton}
     />
