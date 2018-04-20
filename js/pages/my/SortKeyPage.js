@@ -95,7 +95,7 @@ export default class SortKeyPage extends Component {
               <Text style={styles.title}>保存</Text>
          </View>
     </TouchableOpacity>
-    return <View style={{flex:1}}>
+    return <View style={{flex:1,backgroundColor:'#fff'}}>
     <NavigationBar
         title={title}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}

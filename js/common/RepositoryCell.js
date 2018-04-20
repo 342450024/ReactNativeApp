@@ -12,7 +12,7 @@ constructor(props){
    super(props);
    this.state = {
      isFavorite:this.props.item.isFavorite,
-     favoriteIcon:require('../../res/images/ic_unstar_transparent.png')
+     favoriteIcon:this.props.item.isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_unstar_transparent.png')
    }
 }
 onPressFavorite(){

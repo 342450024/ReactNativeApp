@@ -4,9 +4,42 @@ import {
   Text,
   View,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableHighlight
 } from 'react-native';
 export default class ViewUtils{
+  /**
+   * callBack 回调函数
+   * icon 左侧图标
+     text显示的文本
+     tintStyle 图标颜色
+     expandableIcon 右侧图标
+   */
+     static getSettingItem(callBack,icon,text,tintStyle,expandableIcon){
+            return (
+              <TouchableHighlight
+                onPress={callBack}
+              >
+              <View style={styles.item}>
+                    <View style={{flexDirection:'row',alignItems:'center'}}>
+                          <Image source={icon} resizeMode='stretch'
+                               style={[{width:20,height:20,marginRight:15,marginLeft:15},tintStyle]}
+                          />
+                          <Text>{text}</Text>
+                    </View>
+                   <Image source={expandableIcon?expandableIcon:require('../../res/images/ic_tiaozhuan.png')}
+                   style={[{width:22,height:22,marginRight:10},{tintColor:'#2196f3'}]}
+                   />
+              </View>
+              </TouchableHighlight>
+            );
+     }
+
+
+
+
+
+
        static getLeftButton(callBack){
          return <TouchableOpacity
           style={{padding:8}}
@@ -18,3 +51,19 @@ export default class ViewUtils{
          </TouchableOpacity>
        }
 }
+const styles = StyleSheet.create({
+  container:{
+    flex:1
+  },
+  item:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    backgroundColor:'#fff',
+    padding:10,
+    height:60
+  },
+  tips:{
+    fontSize:29
+  }
+})

@@ -5,7 +5,9 @@ import {
   View,
   TextInput,
   FlatList,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import {Navigator} from 'react-native-deprecated-custom-components';
@@ -17,6 +19,7 @@ import FavoriteDao from "../expand/dao/FavoriteDao"
 import WebViewDetail from './WebViewDetail'
 import Utils from '../util/utils'
 import ProjectModel from '../model/ProjectModel'
+import SearchPage from './SearchPage'
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
@@ -42,7 +45,26 @@ export default class PopularPage extends Component {
           console.log(error);
         })
   }
+  rightRenderView(){
+    return <View style={{marginRight:20}}>
+    <TouchableOpacity onPress={()=>{
+      this.props.navigator.push({
+        component:SearchPage,
+        params:{
+          ...this.props
+        }
+      })
+    }}>
+    <View>
+        <Image
+         style={{width:24,height:24}}
+         source={require('../../res/images/ic_search_white_48pt.png')}
+         />
+    </View>
 
+    </TouchableOpacity>
+    </View>
+  }
   render(){
     let content=this.state.languages.length>0?<ScrollableTabView
     tabBarBackgroundColor='#2196F3'
@@ -62,7 +84,9 @@ export default class PopularPage extends Component {
         title={'最热'}
         statusBar={{
           backgroundColor:'#2196F3'
-        }}/>
+        }}
+          rightButton={this.rightRenderView()}
+        />
         {content}
     </View>
   }
@@ -141,7 +165,7 @@ class PopularSon extends Component {
            this.items = result&&result.items?result.items:result?result:[];
            this.getFavoriteKeys();
 
-           if(result&&result.update_date&&!this.dataRepository.checkData(result.update_date)){
+           if(result&&result.update_date&&!Utils.checkData(result.update_date)){
              DeviceEventEmitter.emit('showToast','数据过时');
              return this.dataRepository.fetchNetRepository(url);
            }else{

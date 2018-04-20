@@ -217,7 +217,7 @@ class TrendingSon extends Component {
            this.getFavoriteKeys();
 
 
-           if(result&&result.update_date&&!this.dataRepository.checkData(result.update_date)){
+           if(result&&result.update_date&&!Utils.checkData(result.update_date)){
              DeviceEventEmitter.emit('showToast','数据过时');
              return this.dataRepository.fetchNetRepository(url);
            }else{

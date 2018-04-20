@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import GitHubTrending from 'GitHubTrending';
 //标识区分两个模块
-export var FLAG_STORAGE = {flag_popular:'popular',flag_trending:'trending'};
+export var FLAG_STORAGE = {flag_popular:'popular',flag_trending:'trending',flag_my:'my'};
 export default class DataRepository{
   constructor(flag){
     this.flag = flag;
@@ -71,32 +71,36 @@ export default class DataRepository{
 
   fetchNetRepository(url){
     return new Promise((resolve,reject)=>{
-      //trending模块
-         if(this.flag === FLAG_STORAGE.flag_trending){
-            this.trending.fetchTrending(url)
-                .then(result=>{
-                  if(!result){
-                    reject(new Error('responseData is null'));
-                    return;
-                  }
-                  this.saveRepository(url,result);
-                  resolve(result);
-                })
-         }else {
+         if(this.flag !== FLAG_STORAGE.flag_trending){
            //popular模块
            fetch(url)
                 .then(response=>response.json())
-                .then(result=>{
-                  if(!result){
+                .then((responseData)=>{
+                  if(this.flag === FLAG_STORAGE.flag_my&&responseData){
+                    resolve(responseData);
+                    this.saveRepository(url,responseData)
+                  }else if(responseData&&responseData.items){
+                    resolve(responseData.items);
+                    this.saveRepository(url,responseData.items)
+                  }else{
                     reject(new Error('responseData is null'));
-                    return;
                   }
-                  resolve(result.items);
-                  this.saveRepository(url,result.items)
+
                 })
                 .catch(error=>{
                   reject(error);
                 })
+         }else {
+           this.trending.fetchTrending(url)
+               .then(result=>{
+                 if(!result){
+                   reject(new Error('responseData is null'));
+                   return;
+                 }
+                 this.saveRepository(url,result);
+                 resolve(result);
+               })
+
          }
     })
   }
@@ -105,19 +109,13 @@ export default class DataRepository{
   */
   saveRepository(url,items,callBack){
     if(!url||!items)return;
-     let wrapData = {items:items,update_date:new Date().getTime()};
+    let wrapData;
+    if(this.flag === FLAG_STORAGE.flag_my){
+      wrapData = {item:items,update_date:new Date().getTime()};
+    }else{
+      wrapData = {items:items,update_date:new Date().getTime()};
+    }
      AsyncStorage.setItem(url,JSON.stringify(wrapData),callBack);
   }
-  /*
-    通多对比时间查看数据是否过期
-  */
-  checkData(longTime){
-    let cDate = new Date();
-    let tDate = new Date();
-    tDate.setTime(longTime);
-    if(cDate.getMonth() !== tDate.getMonth())return false;
-    if(cDate.getDay() !== tDate.getDay())return false;
-    if(cDate.getHours() - tDate.getHours() > 4)return false;
-    return true;
-  }
+
 }

@@ -46,11 +46,16 @@ export default class NavigationBar extends Component{
          let titleView = this.props.titleView?this.props.titleView:
          <Text style={styles.title}>{this.props.title}</Text>
          let content = <View style={styles.navBar}>
+         <View>
          {this.props.leftButton}
+         </View>
          <View style={styles.titleViewContainer}>
          {titleView}
          </View>
+         <View>
          {this.props.rightButton}
+         </View>
+
          </View>
          return(
            <View style={[styles.container,this.props.style]}>
@@ -69,7 +74,6 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems:'center',
     height:Platform.os === 'ios'?NAV_BAR_HEIGHT_IOS:NAVBAR_HEIGHT_ANDROID,
-
     flexDirection:'row'
   },
   titleViewContainer:{
