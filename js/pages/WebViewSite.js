@@ -19,6 +19,7 @@ export default class WebViewSite extends Component {
       url:this.props.url,
       canGoBack:false,
       title:this.props.title,
+      theme:this.props.theme
     }
   }
 
@@ -43,6 +44,7 @@ export default class WebViewSite extends Component {
     return <View style={styles.container}>
     <NavigationBar
         title={this.state.title}
+        style={this.state.theme.styles.navBar}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
     />
     <WebView

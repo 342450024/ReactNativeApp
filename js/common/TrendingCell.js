@@ -12,6 +12,7 @@ export default class TrendingCell extends Component{
   constructor(props){
      super(props);
      this.state = {
+       theme:this.props.theme,
        isFavorite:this.props.item.isFavorite,
        favoriteIcon:require('../../res/images/ic_unstar_transparent.png')
      }
@@ -28,6 +29,10 @@ export default class TrendingCell extends Component{
   }
   componentWillReceiveProps(nextProps){
      this.setFavoriteState(nextProps.item.isFavorite);
+     if(nextProps.theme!==this.state.theme){
+       this.setState({theme:nextProps.theme});
+
+     }
   }
 
 
@@ -36,7 +41,7 @@ export default class TrendingCell extends Component{
     let favoriteButton=<TouchableOpacity
      onPress={()=>{this.onPressFavorite()}}
     >
-      <Image style={[{width:20,height:20},{tintColor:'#2196f3'}]} source={this.state.favoriteIcon}/>
+      <Image style={[{width:20,height:20},{tintColor:this.state.theme.themeColor}]} source={this.state.favoriteIcon}/>
     </TouchableOpacity>
     return  <TouchableOpacity
     style={styles.container}

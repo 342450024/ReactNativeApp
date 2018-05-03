@@ -7,7 +7,8 @@ import {
   FlatList,
   DeviceEventEmitter,
   TouchableOpacity,
-  Image
+  Image,
+  RefreshControl
 } from 'react-native';
 import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import {Navigator} from 'react-native-deprecated-custom-components';
@@ -18,22 +19,33 @@ import LanguageDao,{FLAG_LANGUAGE} from "../expand/dao/LanguageDao"
 import FavoriteDao from "../expand/dao/FavoriteDao"
 import WebViewDetail from './WebViewDetail'
 import Utils from '../util/utils'
+import ViewUtils from '../util/ViewUtils'
 import ProjectModel from '../model/ProjectModel'
 import SearchPage from './SearchPage'
+import MoreMenu,{MORE_MENU} from '../common/MoreMenu'
+import {FLAG_TAB} from './HomePage'
+import BaseComponent from './BaseComponent'
+import CustomThemePage from './my/CustomTheme'
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
-export default class PopularPage extends Component {
+export default class PopularPage extends BaseComponent {
   constructor(props){
     super(props);
     this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
     this.state = {
-      languages:[]
+      languages:[],
+      theme:this.props.theme,
+      customThemeViewVisible:false,
     }
   }
   componentDidMount(){
+    //BaseComponent中重写了componentDidMount所以这样调用
+    super.componentDidMount();
     this.loadData();
+
   }
+
   loadData(){
     this.languageDao.fetch()
         .then(result=>{
@@ -46,8 +58,10 @@ export default class PopularPage extends Component {
         })
   }
   rightRenderView(){
-    return <View style={{marginRight:20}}>
-    <TouchableOpacity onPress={()=>{
+    return <View style={{marginRight:0,flexDirection:'row'}}>
+    <TouchableOpacity
+    style={{padding:5}}
+    onPress={()=>{
       this.props.navigator.push({
         component:SearchPage,
         params:{
@@ -61,13 +75,40 @@ export default class PopularPage extends Component {
          source={require('../../res/images/ic_search_white_48pt.png')}
          />
     </View>
-
     </TouchableOpacity>
+      {ViewUtils.getMoreButton(()=>this.refs.moreMenu.open())}
     </View>
   }
+  renderMoreView(){
+  let params={...this.props,fromPage:FLAG_TAB.flag_popularTab}
+    return <MoreMenu
+    ref='moreMenu'
+    {...params}
+    menus={[MORE_MENU.Custom_Key,
+            MORE_MENU.Sort_Key,
+            MORE_MENU.Remove_Key,
+            MORE_MENU.Custom_Theme,
+            MORE_MENU.About_Author,
+            MORE_MENU.About]}
+    anchorView={this.refs.moreMenuButton}
+    onMoreMenuSelect={(e)=>{
+      if(e===MORE_MENU.Custom_Theme){
+        this.setState({customThemeViewVisible:true})
+      }
+    }}
+    />;
+  }
+  renderCustomThemeView(){
+    return (<CustomThemePage
+      visible={this.state.customThemeViewVisible}
+      {...this.props}
+      onClose={()=>this.setState({customThemeViewVisible:false})}
+      />)
+  }
   render(){
+    let statusBar = {backgroundColor:this.state.theme.themeColor};
     let content=this.state.languages.length>0?<ScrollableTabView
-    tabBarBackgroundColor='#2196F3'
+    tabBarBackgroundColor={this.state.theme.themeColor}
     tabBarInactiveTextColor='mintcream'
     tabBarActiveTextColor="white"
     tabBarUnderlineStyle={{backgroundColor:'#e7e7e7',height:2}}
@@ -82,12 +123,14 @@ export default class PopularPage extends Component {
     return <View style={styles.container}>
         <NavigationBar
         title={'最热'}
-        statusBar={{
-          backgroundColor:'#2196F3'
-        }}
+        statusBar={statusBar}
+        style={this.state.theme.styles.navBar}
           rightButton={this.rightRenderView()}
         />
+
         {content}
+        {this.renderMoreView()}
+        {this.renderCustomThemeView()}
     </View>
   }
 }
@@ -101,7 +144,8 @@ class PopularSon extends Component {
       result:'',
       sourceData:'',
       isFetching:false,
-      favoriteKeys:[]
+      favoriteKeys:[],
+      theme:this.props.theme
     }
   }
   componentDidMount(){
@@ -110,7 +154,7 @@ class PopularSon extends Component {
       this.isFavoriteChanged=true;
     })
   }
-  componentWillReceiveProps(){
+  componentWillReceiveProps(nextProps){
       if(this.isFavoriteChanged){
         this.isFavoriteChanged = false;
         this.getFavoriteKeys();
@@ -209,14 +253,22 @@ class PopularSon extends Component {
 
   }
   render(){
+    let themeColor = this.props.theme.themeColor;
     return <View style={styles.container}>
     <FlatList
     ref={(flatList)=>this._flatList = flatList}
     keyExtractor={(item, index) => index}
     renderItem={(item)=><RepositoryCell key={item.item.id} item={item.item} {...this.props} onSelect={()=>this.onSelect(item)} onFavorite={(item,isFavorite)=>this.onFavorite(item,isFavorite)}/>}
-    onRefresh={()=>this.loadData()}
-    refreshing={this.state.isFetching}
+
     data={this.state.sourceData}
+    refreshControl={
+      <RefreshControl
+               refreshing={this.state.isFetching}
+               onRefresh={()=>this.loadData()}
+               colors={[themeColor]}
+               progressBackgroundColor="#fff"
+             />
+}
     />
 
     </View>

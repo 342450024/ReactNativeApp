@@ -6,8 +6,10 @@ import {
   TouchableHighlight,
   Image,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
+  DeviceEventEmitter
 } from 'react-native';
+import {ACTION_HOME,FLAG_TAB} from  '../HomePage'
 import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../../common/NavigationBar'
 import CustomKeyPage from './CustomKeyPage'
@@ -23,7 +25,8 @@ export default class SortKeyPage extends Component {
     this.sortResultArray=[];
     this.originalCheckedArray=[];
     this.state={
-      checkedArray:[]
+      checkedArray:[],
+      theme:this.props.theme
     }
   }
   componentDidMount(){
@@ -75,6 +78,8 @@ export default class SortKeyPage extends Component {
    }
    this.getSortResult();
    this.languageDao.save(this.sortResultArray);
+   var jumpToTab=this.props.flag===FLAG_LANGUAGE.flag_key?FLAG_TAB.flag_popularTab:FLAG_TAB.flag_trendingTab;
+   DeviceEventEmitter.emit('ACTION_HOME',ACTION_HOME.A_RESTART,jumpToTab);
    this.props.navigator.pop();
  }
  getSortResult(){
@@ -98,6 +103,7 @@ export default class SortKeyPage extends Component {
     return <View style={{flex:1,backgroundColor:'#fff'}}>
     <NavigationBar
         title={title}
+        style={this.state.theme.styles.navBar}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
         rightButton={rightButton}
     />
@@ -109,7 +115,7 @@ export default class SortKeyPage extends Component {
           this.state.checkedArray.splice(e.to, 0, this.state.checkedArray.splice(e.from, 1)[0]);
           this.forceUpdate()
         }}
-        renderRow={row => <SortCell data={row} />}
+        renderRow={row => <SortCell data={row} {...this.props}/>}
       />
     </View>
   }
@@ -130,6 +136,7 @@ class SortCell extends Component{
       <View style={styles.sortCell}>
         <Image
             source={require('./img/ic_sort.png')}
+            tintColor={this.props.theme.themeColor}
          />
         <Text style={{marginLeft:20}}>{this.props.data.name}</Text>
       </View>

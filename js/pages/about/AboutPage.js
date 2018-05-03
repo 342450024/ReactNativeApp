@@ -18,7 +18,8 @@ export default class AboutPage extends Component {
     this.aboutCommon = new AboutCommon(props,(dic)=>this.updateState(dic),FLAG_ABOUT.flag_about,config);
     this.state={
       projectModels:[],
-      author:config.author
+      author:config.author,
+      theme:this.props.theme
     }
   }
    updateState(dic){
@@ -69,11 +70,11 @@ export default class AboutPage extends Component {
   render() {
     let content = <View>
     {this.aboutCommon.renderRepository(this.state.projectModels)}
-    {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.WebSite),require('../../../res/images/ic_computer.png'),'网站',{tintColor:'#2196f3'})}
+    {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.WebSite),require('../../../res/images/ic_computer.png'),'网站',{tintColor:this.state.theme.themeColor})}
     <View style={GlobalStyles.line}></View>
-    {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.About_Author),require('../my/img/ic_insert_emoticon.png'),'作者',{tintColor:'#2196f3'})}
+    {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.About_Author),require('../my/img/ic_insert_emoticon.png'),'作者',{tintColor:this.state.theme.themeColor})}
     <View style={GlobalStyles.line}></View>
-    {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Feedback),require('../../../res/images/ic_feedback.png'),'QQ',{tintColor:'#2196f3'})}
+    {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Feedback),require('../../../res/images/ic_feedback.png'),'QQ',{tintColor:this.state.theme.themeColor})}
     <View style={GlobalStyles.line}></View>
     </View>;
     return this.aboutCommon.renderView(content,{

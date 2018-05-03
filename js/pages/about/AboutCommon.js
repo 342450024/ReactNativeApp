@@ -159,7 +159,7 @@ export default class AboutCommon{
     return (
           <ParallaxScrollView
             headerBackgroundColor="#333"
-            backgroundColor='#2196f3'
+            backgroundColor={this.props.theme.themeColor}
             stickyHeaderHeight={ STICKY_HEADER_HEIGHT }
             parallaxHeaderHeight={ PARALLAX_HEADER_HEIGHT }
             backgroundSpeed={10}

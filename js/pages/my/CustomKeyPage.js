@@ -6,8 +6,10 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Alert
+  Alert,
+  DeviceEventEmitter
 } from 'react-native';
+import {ACTION_HOME,FLAG_TAB} from  '../HomePage'
 import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../../common/NavigationBar'
 import ViewUtils from '../../util/ViewUtils'
@@ -21,12 +23,14 @@ export default class CustomKeyPage extends Component {
      this.chanageValues = [];
      this.isRemoveKey = this.props.isRemoveKey?true:false;
      this.state={
-       dataArray:[]
+       dataArray:[],
+       theme:this.props.theme
      }
   }
   componentDidMount(){
     this.loadData();
   }
+
   loadData(){
     this.languageDao.fetch()
         .then(result=>{
@@ -49,7 +53,10 @@ export default class CustomKeyPage extends Component {
       }
     }
     this.languageDao.save(this.state.dataArray);
+    var jumpToTab=this.props.flag===FLAG_LANGUAGE.flag_key?FLAG_TAB.flag_popularTab:FLAG_TAB.flag_trendingTab;
+    DeviceEventEmitter.emit('ACTION_HOME',ACTION_HOME.A_RESTART,jumpToTab);
     this.props.navigator.pop();
+
   }
   onBack(){
     if(this.chanageValues.length === 0){
@@ -96,9 +103,9 @@ export default class CustomKeyPage extends Component {
         onClick={()=>this.onClick(data)}
         leftText={leftText}
         isChecked={isChecked}
-        unCheckedImage={<Image style={{tintColor:'#2196F3'}} source={require('./img/ic_check_box_outline_blank.png')}/>}
-        CheckedImage={<Image style={{tintColor:'#2196F9'}} source={require('./img/ic_check_box.png')}/>}
-
+        checkedImage={<Image source={require('../../pages/my/img/ic_check_box.png')} style={this.props.theme.styles.tabBarSelectedIcon}/>}
+        unCheckedImage={<Image source={require('../../pages/my/img/ic_check_box_outline_blank.png')} style={this.props.theme.styles.tabBarSelectedIcon}/>}
+  
       />
     )
   }
@@ -116,6 +123,7 @@ export default class CustomKeyPage extends Component {
     return <View style={styles.container}>
     <NavigationBar
         title={title}
+        style={this.state.theme.styles.navBar}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
         rightButton={rightButton}
     />

@@ -24,6 +24,7 @@ export default class WebViewDetail extends Component {
       url:this.url,
       canGoBack:false,
       title:title,
+      theme:this.props.theme,
       isFavorite:this.props.item.isFavorite,
       favoriteIcon:this.props.item.isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_star_navbar.png')
     }
@@ -77,6 +78,7 @@ renderRightButton(){
     return <View style={styles.container}>
     <NavigationBar
         title={this.state.title}
+         style={this.state.theme.styles.navBar}
         leftButton={ViewUtils.getLeftButton(()=>{this.onBack()})}
         rightButton={this.renderRightButton()}
     />

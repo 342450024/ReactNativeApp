@@ -12,6 +12,7 @@ constructor(props){
    super(props);
    this.state = {
      isFavorite:this.props.item.isFavorite,
+     theme:this.props.theme,
      favoriteIcon:this.props.item.isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_unstar_transparent.png')
    }
 }
@@ -27,6 +28,10 @@ setFavoriteState(isFavorite){
 }
 componentWillReceiveProps(nextProps){
    this.setFavoriteState(nextProps.item.isFavorite);
+   if(nextProps.theme!==this.state.theme){
+     this.setState({theme:nextProps.theme});
+
+   }
 }
 
 
@@ -34,7 +39,7 @@ componentWillReceiveProps(nextProps){
     let favoriteButton=<TouchableOpacity
      onPress={()=>{this.onPressFavorite()}}
     >
-      <Image style={[{width:20,height:20},{tintColor:'#2196f3'}]} source={this.state.favoriteIcon}/>
+      <Image style={[{width:20,height:20},{tintColor:this.state.theme.themeColor}]} source={this.state.favoriteIcon}/>
     </TouchableOpacity>
 
     return  <TouchableOpacity

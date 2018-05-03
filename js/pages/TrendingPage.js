@@ -7,7 +7,8 @@ import {
   FlatList,
   Image,
   DeviceEventEmitter,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import {Navigator} from 'react-native-deprecated-custom-components';
@@ -20,7 +21,12 @@ import TimeSpan from '../model/TimeSpan'
 import Popover from '../common/Popover'
 import FavoriteDao from "../expand/dao/FavoriteDao"
 import Utils from '../util/utils'
+import ViewUtils from '../util/ViewUtils'
 import ProjectModel from '../model/ProjectModel'
+import MoreMenu,{MORE_MENU} from '../common/MoreMenu'
+import {FLAG_TAB} from './HomePage'
+import BaseComponent from './BaseComponent'
+import CustomThemePage from './my/CustomTheme'
 var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 const URL = 'https://github.com/trending/';
 var timeSpanTextArray = [
@@ -28,7 +34,7 @@ var timeSpanTextArray = [
   ,new TimeSpan('本 周','?since=weekly')
   ,new TimeSpan('本 月','?since=monthly')
 ]
-export default class TrendingPage extends Component {
+export default class TrendingPage extends BaseComponent {
   constructor(props){
     super(props);
     this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_language);
@@ -36,10 +42,13 @@ export default class TrendingPage extends Component {
       languages:[],
       isVisible: false,
       buttonRect: {},
-      timeSpan:timeSpanTextArray[0]
+      theme:this.props.theme,
+      timeSpan:timeSpanTextArray[0],
+      customThemeViewVisible:false,
     }
   }
   componentDidMount(){
+    super.componentDidMount();
     this.loadData();
 
   }
@@ -54,6 +63,19 @@ export default class TrendingPage extends Component {
           console.log(error);
         })
   }
+  rightRenderView(){
+    return <View style={{marginRight:0,flexDirection:'row'}}>
+
+      {ViewUtils.getMoreButton(()=>this.refs.moreMenu.open())}
+    </View>
+  }
+  renderCustomThemeView(){
+    return (<CustomThemePage
+      visible={this.state.customThemeViewVisible}
+      {...this.props}
+      onClose={()=>this.setState({customThemeViewVisible:false})}
+      />)
+  }
   renderTitleview(){
     return <View>
           <TouchableOpacity ref='button' onPress={()=>this.showPopover()}>
@@ -63,6 +85,24 @@ export default class TrendingPage extends Component {
             </View>
           </TouchableOpacity>
     </View>
+  }
+  renderMoreView(){
+  let params={...this.props,fromPage:FLAG_TAB.flag_popularTab}
+    return <MoreMenu
+    ref='moreMenu'
+    {...params}
+    menus={[MORE_MENU.Custom_Language,
+            MORE_MENU.Sort_Language,
+            MORE_MENU.Custom_Theme,
+            MORE_MENU.About_Author,
+            MORE_MENU.About]}
+    anchorView={this.refs.moreMenuButton}
+    onMoreMenuSelect={(e)=>{
+      if(e===MORE_MENU.Custom_Theme){
+        this.setState({customThemeViewVisible:true})
+      }
+    }}
+    />;
   }
   showPopover() {
     this.refs.button.measure((ox, oy, width, height, px, py) => {
@@ -86,8 +126,9 @@ export default class TrendingPage extends Component {
    }
 
   render(){
+    let statusBar = {backgroundColor:this.state.theme.themeColor};
     let content=this.state.languages.length>0?<ScrollableTabView
-    tabBarBackgroundColor='#2196F3'
+    tabBarBackgroundColor={this.state.theme.themeColor}
     tabBarInactiveTextColor='mintcream'
     tabBarActiveTextColor="white"
     tabBarUnderlineStyle={{backgroundColor:'#e7e7e7',height:2}}
@@ -102,9 +143,10 @@ export default class TrendingPage extends Component {
     return <View style={styles.container}>
         <NavigationBar
         titleView={this.renderTitleview()}
-        statusBar={{
-          backgroundColor:'#2196F3'
-        }}/>
+        statusBar={statusBar}
+        style={this.state.theme.styles.navBar}
+        rightButton={this.rightRenderView()}
+        />
         {content}
         <Popover
                isVisible={this.state.isVisible}
@@ -126,7 +168,8 @@ export default class TrendingPage extends Component {
                    }
                </View>
            </Popover>
-
+{this.renderMoreView()}
+  {this.renderCustomThemeView()}
     </View>
   }
 }
@@ -140,7 +183,8 @@ class TrendingSon extends Component {
       result:'',
       sourceData:'',
       isFetching:false,
-      favoriteKeys:[]
+      favoriteKeys:[],
+      theme:this.props.theme
     }
   }
 
@@ -263,9 +307,15 @@ class TrendingSon extends Component {
     ref={(flatList)=>this._flatList = flatList}
     keyExtractor={(item, index) => index}
     renderItem={(item)=><TrendingCell item={item.item} {...this.props} onSelect={()=>this.onSelect(item)} onFavorite={(item,isFavorite)=>this.onFavorite(item,isFavorite)}/>}
-    onRefresh={()=>this.loadData(this.props.timeSpan)}
-    refreshing={this.state.isFetching}
     data={this.state.sourceData}
+    refreshControl={
+      <RefreshControl
+               refreshing={this.state.isFetching}
+               onRefresh={()=>this.loadData(this.props.timeSpan)}
+               colors={[this.props.theme.themeColor]}
+               progressBackgroundColor="#fff"
+             />
+}
     />
 
     </View>

@@ -28,18 +28,12 @@ export default class ViewUtils{
                           <Text>{text}</Text>
                     </View>
                    <Image source={expandableIcon?expandableIcon:require('../../res/images/ic_tiaozhuan.png')}
-                   style={[{width:22,height:22,marginRight:10},{tintColor:'#2196f3'}]}
+                   style={[{width:22,height:22,marginRight:10},tintStyle]}
                    />
               </View>
               </TouchableHighlight>
             );
      }
-
-
-
-
-
-
        static getLeftButton(callBack){
          return <TouchableOpacity
           style={{padding:8}}
@@ -50,6 +44,21 @@ export default class ViewUtils{
          />
          </TouchableOpacity>
        }
+       /**
+        * 获取更多按钮
+        */
+        static getMoreButton(callBack){
+          return <TouchableHighlight
+              underlayColor={'transparent'}
+              ref='moreMenuButton'
+              style={{padding:5}}
+              onPress={callBack}
+          >
+          <View style={{paddingRight:8}}>
+              <Image style={{width:24,height:24}} source={require('../../res/images/ic_more_vert_white_48pt.png')}/>
+          </View>
+          </TouchableHighlight>
+        }
 }
 const styles = StyleSheet.create({
   container:{

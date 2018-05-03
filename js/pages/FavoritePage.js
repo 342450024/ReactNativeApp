@@ -6,7 +6,8 @@ import {
   TextInput,
   FlatList,
   Image,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  RefreshControl
 } from 'react-native';
 import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import {Navigator} from 'react-native-deprecated-custom-components';
@@ -18,31 +19,74 @@ import FavoriteDao from "../expand/dao/FavoriteDao"
 import WebViewDetail from './WebViewDetail'
 import ProjectModel from '../model/ProjectModel'
 import ArrayUtils from '../util/ArrayUtils'
-export default class PopularPage extends Component {
+import MoreMenu,{MORE_MENU} from '../common/MoreMenu'
+import {FLAG_TAB} from './HomePage'
+import ViewUtils from '../util/ViewUtils'
+import BaseComponent from './BaseComponent'
+import CustomThemePage from './my/CustomTheme'
+export default class FavoritePage extends BaseComponent {
   constructor(props){
     super(props);
+    this.state = {
+      theme:this.props.theme,
+      customThemeViewVisible:false,
+    }
+  }
+  rightRenderView(){
+    return <View style={{marginRight:0,flexDirection:'row'}}>
 
+      {ViewUtils.getMoreButton(()=>this.refs.moreMenu.open())}
+    </View>
+  }
+  renderMoreView = ()=>{
+  let params={...this.props,fromPage:FLAG_TAB.flag_popularTab}
+    return <MoreMenu
+    ref='moreMenu'
+    {...params}
+    menus={[MORE_MENU.Custom_Theme,
+            MORE_MENU.About_Author,
+            MORE_MENU.About]}
+    anchorView={this.refs.moreMenuButton}
+    onMoreMenuSelect={(e)=>{
+      if(e===MORE_MENU.Custom_Theme){
+        this.setState({customThemeViewVisible:true})
+      }
+    }}
+    />;
+  }
+  renderCustomThemeView(){
+    return (<CustomThemePage
+      visible={this.state.customThemeViewVisible}
+      {...this.props}
+      onClose={()=>this.setState({customThemeViewVisible:false})}
+      />)
   }
 
   render(){
+    let statusBar = {backgroundColor:this.state.theme.themeColor};
     let content=<ScrollableTabView
-    tabBarBackgroundColor='#2196F3'
+    tabBarBackgroundColor={this.state.theme.themeColor}
     tabBarInactiveTextColor='mintcream'
     tabBarActiveTextColor="white"
     tabBarUnderlineStyle={{backgroundColor:'#e7e7e7',height:2}}
     renderTabBar={()=><ScrollableTabBar/>}>
   <FavoriteSon tabLabel={'最热'} {...this.props} flag={FLAG_STORAGE.flag_popular}></FavoriteSon>
   <FavoriteSon tabLabel={'趋势'} {...this.props} flag={FLAG_STORAGE.flag_trending}></FavoriteSon>
+
       </ScrollableTabView>;
 
 
     return <View style={styles.container}>
+
         <NavigationBar
         title={'收藏'}
-        statusBar={{
-          backgroundColor:'#2196F3'
-        }}/>
+        statusBar={statusBar}
+        style={this.state.theme.styles.navBar}
+        rightButton={this.rightRenderView()}
+        />
         {content}
+        {this.renderMoreView()}
+          {this.renderCustomThemeView()}
     </View>
   }
 }
@@ -56,7 +100,8 @@ class FavoriteSon extends Component {
       result:'',
       sourceData:'',
       isFetching:false,
-      favoriteKeys:[]
+      favoriteKeys:[],
+      theme:this.props.theme
     }
   }
   componentDidMount(){
@@ -74,6 +119,7 @@ class FavoriteSon extends Component {
     if(!this)return;
     this.setState(dic);
   }
+
   //用箭头函数，在组件中可以直接调用
     loadData(isShowLoading){
  if(isShowLoading){
@@ -134,7 +180,7 @@ class FavoriteSon extends Component {
   return <CellComponent
   item={item.item}
   {...this.props}
-
+  theme={this.props.theme}
   onSelect={()=>this.onSelect(item)}
   onFavorite={(item,isFavorite)=>this.onFavorite(item,isFavorite)}
   />
@@ -142,7 +188,7 @@ class FavoriteSon extends Component {
   noneData(){
     return <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
     <Image
-        style={{width:50,height:50,marginTop:100,marginBottom:20}}
+        style={{width:50,height:50,marginTop:100,marginBottom:20,tintColor:this.props.theme.themeColor}}
         source={require('../../res/images/404_72.png')}
     />
     <Text>我已经尽力了╭(╯^╰)╮</Text>
@@ -156,9 +202,15 @@ class FavoriteSon extends Component {
     ListEmptyComponent={()=>this.noneData()}
     keyExtractor={(item, index) => index}
     renderItem={(item)=>this.renderCell(item)}
-    onRefresh={()=>this.loadData()}
-    refreshing={this.state.isFetching}
     data={this.state.sourceData}
+    refreshControl={
+      <RefreshControl
+               refreshing={this.state.isFetching}
+               onRefresh={()=>this.loadData()}
+               colors={[this.props.theme.themeColor]}
+               progressBackgroundColor="#fff"
+             />
+}
     />
 
     </View>

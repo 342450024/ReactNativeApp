@@ -74,7 +74,8 @@ export default class AboutMePage extends Component {
       showRepository:false,
       showBlog:false,
       showQQ:false,
-      showContact:false
+      showContact:false,
+      theme:this.props.theme
     }
   }
    updateState(dic){
@@ -149,7 +150,7 @@ export default class AboutMePage extends Component {
         let title=isShowAccount?dic[i].title+':'+dic[i].account:dic[i].title;
         views.push(
           <View key={i}>
-            {ViewUtils.getSettingItem(()=>this.itemClick(dic[i]),'',title,{tintColor:'#2196F3'})}
+            {ViewUtils.getSettingItem(()=>this.itemClick(dic[i]),'',title,{tintColor:this.state.theme.themeColor})}
           </View>
         )
       }
@@ -159,22 +160,22 @@ export default class AboutMePage extends Component {
   render() {
     let content = <View>
 
-    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.BLOG),require('../../../res/images/ic_computer.png'),FLAG.BLOG.name,{tintColor:'#2196f3'},
+    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.BLOG),require('../../../res/images/ic_computer.png'),FLAG.BLOG.name,{tintColor:this.state.theme.themeColor},
     this.getClickIcon(this.state.showBlog))}
     <View style={GlobalStyles.line}></View>
     {this.state.showBlog?this.renderItems(FLAG.BLOG.items):null}
 
-    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.REPOSITORY),require('../../../res/images/ic_code.png'),FLAG.REPOSITORY,{tintColor:'#2196f3'},
+    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.REPOSITORY),require('../../../res/images/ic_code.png'),FLAG.REPOSITORY,{tintColor:this.state.theme.themeColor},
     this.getClickIcon(this.state.showRepository))}
     <View style={GlobalStyles.line}></View>
     {this.state.showRepository?this.aboutCommon.renderRepository(this.state.projectModels):null}
 
-    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.QQ),require('../../../res/images/ic_feedback.png'),FLAG.QQ.name,{tintColor:'#2196f3'},
+    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.QQ),require('../../../res/images/ic_feedback.png'),FLAG.QQ.name,{tintColor:this.state.theme.themeColor},
     this.getClickIcon(this.state.showQQ))}
     <View style={GlobalStyles.line}></View>
     {this.state.showQQ?this.renderItems(FLAG.QQ.items,true):null}
 
-    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.CONTACT),require('../../../res/images/ic_contacts.png'),FLAG.CONTACT.name,{tintColor:'#2196f3'},
+    {ViewUtils.getSettingItem(()=>this.itemClick(FLAG.CONTACT),require('../../../res/images/ic_contacts.png'),FLAG.CONTACT.name,{tintColor:this.state.theme.themeColor},
     this.getClickIcon(this.state.showContact))}
     <View style={GlobalStyles.line}></View>
     {this.state.showContact?this.renderItems(FLAG.CONTACT.items,true):null}

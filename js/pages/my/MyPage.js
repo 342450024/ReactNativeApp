@@ -11,6 +11,7 @@ import {
 
 import NavigationBar from '../../common/NavigationBar'
 import CustomKeyPage from './CustomKeyPage'
+import CustomThemePage from './CustomTheme'
 import SortKeyPage from './SortKeyPage'
 import AboutPage from '../about/AboutPage'
 import AboutMePage from '../about/AboutMePage'
@@ -18,10 +19,23 @@ import {FLAG_LANGUAGE} from '../../expand/dao/LanguageDao'
 import {MORE_MENU} from '../../common/MoreMenu'
 import GlobalStyles from '../../../res/styles/GlobalStyles'
 import ViewUtils from '../../util/ViewUtils'
-export default class MyPage extends Component {
-  // this.props.navigator.resetTo({
-  //       component:HomePage
-  // })
+import BaseComponent from '../BaseComponent'
+export default class MyPage extends BaseComponent {
+   constructor(props){
+     super(props);
+     this.state={
+       customThemeViewVisible:false,
+       theme:this.props.theme
+     }
+   }
+   renderCustomThemeView(){
+     return (<CustomThemePage
+       visible={this.state.customThemeViewVisible}
+       {...this.props}
+       onClose={()=>this.setState({customThemeViewVisible:false})}
+       />)
+   }
+
   itemClick(menu){
     let TargetComponent,params = {...this.props,menuType:menu};
     switch (menu) {
@@ -47,6 +61,7 @@ export default class MyPage extends Component {
           params.isRemoveKey = true;
           break;
         case MORE_MENU.Custom_Theme:
+         this.setState({customThemeViewVisible:true});
           break;
         case MORE_MENU.About_Author:
         TargetComponent = AboutMePage;
@@ -64,7 +79,7 @@ export default class MyPage extends Component {
     }
   }
   render(){
-    let top = <NavigationBar title={'我的'}/>
+    let top = <NavigationBar title={'我的'} style={this.state.theme.styles.navBar}/>
     return <View style={GlobalStyles.root_container}>
          {top}
          <ScrollView>
@@ -75,12 +90,12 @@ export default class MyPage extends Component {
          <View style={styles.item}>
                <View style={{flexDirection:'row',alignItems:'center'}}>
                      <Image source={require('../../../res/images/ic_trending.png')}
-                          style={[{width:40,height:40,marginRight:10},{tintColor:'#2196f3'}]}
+                          style={[{width:40,height:40,marginRight:10},{tintColor:this.state.theme.themeColor}]}
                      />
                      <Text>天龙八部</Text>
                </View>
               <Image source={require('../../../res/images/ic_tiaozhuan.png')}
-              style={[{width:22,height:22,marginRight:10},{tintColor:'#2196f3'}]}
+              style={[{width:22,height:22,marginRight:10},{tintColor:this.state.theme.themeColor}]}
               />
 
          </View>
@@ -89,35 +104,29 @@ export default class MyPage extends Component {
          {/*趋势管理*/}
          <Text style={styles.groupTitle}>趋势管理</Text>
          <View style={GlobalStyles.line}></View>
-         {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Custom_Language),require('./img/ic_custom_language.png'),'自定义语言',{tintColor:'#2196f3'})}
+         {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Custom_Language),require('./img/ic_custom_language.png'),'自定义语言',{tintColor:this.state.theme.themeColor})}
          <View style={GlobalStyles.line}></View>
-         {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Sort_Language),require('./img/ic_swap_vert.png'),'语言排序',{tintColor:'#2196f3'})}
+         {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Sort_Language),require('./img/ic_swap_vert.png'),'语言排序',{tintColor:this.state.theme.themeColor})}
          <View style={GlobalStyles.line}></View>
           {/*标签管理*/}
           <Text style={styles.groupTitle}>标签管理</Text>
           <View style={GlobalStyles.line}></View>
-          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Custom_Key),require('./img/ic_custom_language.png'),'自定义标签',{tintColor:'#2196f3'})}
+          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Custom_Key),require('./img/ic_custom_language.png'),'自定义标签',{tintColor:this.state.theme.themeColor})}
           <View style={GlobalStyles.line}></View>
-          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Sort_Key),require('./img/ic_swap_vert.png'),'标签排序',{tintColor:'#2196f3'})}
+          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Sort_Key),require('./img/ic_swap_vert.png'),'标签排序',{tintColor:this.state.theme.themeColor})}
           <View style={GlobalStyles.line}></View>
-          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Remove_Key),require('./img/ic_remove.png'),'标签移除',{tintColor:'#2196f3'})}
+          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Remove_Key),require('./img/ic_remove.png'),'标签移除',{tintColor:this.state.theme.themeColor})}
           <View style={GlobalStyles.line}></View>
           {/*设置*/}
           <Text style={styles.groupTitle}>设置</Text>
           <View style={GlobalStyles.line}></View>
-          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Custom_Theme),require('./img/ic_view_quilt.png'),'自定义主题',{tintColor:'#2196f3'})}
+          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.Custom_Theme),require('./img/ic_view_quilt.png'),'自定义主题',{tintColor:this.state.theme.themeColor})}
           <View style={GlobalStyles.line}></View>
-          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.About_Author),require('./img/ic_insert_emoticon.png'),'关于作者',{tintColor:'#2196f3'})}
+          {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.About_Author),require('./img/ic_insert_emoticon.png'),'关于作者',{tintColor:this.state.theme.themeColor})}
           <View style={GlobalStyles.line}></View>
          </ScrollView>
 
-
-
-
-
-
-
-
+    {this.renderCustomThemeView()}
     </View>
   }
 }
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems:'center',
     padding:10,
-    height:60,
+    height:100,
     backgroundColor:'#fff'
   },
   tips:{
