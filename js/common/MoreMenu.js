@@ -15,6 +15,8 @@ import AboutPage from '../pages/about/AboutPage'
 import AboutMePage from '../pages/about/AboutMePage'
 import {FLAG_LANGUAGE} from '../expand/dao/LanguageDao'
 import Popover from './Popover'
+import ShareUtil from './ShareUtil';
+
 /**
  * 更多菜单
  */
@@ -116,7 +118,9 @@ import Popover from './Popover'
                }).catch(err => console.error('An error occurred', err));
              break;
              case MORE_MENU.share:
-
+             ShareUtil.shareboard('Check react-native umeng share sdk','imgUrl','https://github.com/ubbcou/blog/issues/18','this is Title.',[1],(code,message) =>{
+ Alert.alert('title', 'msg:' + message);
+});
                break;
 
      }

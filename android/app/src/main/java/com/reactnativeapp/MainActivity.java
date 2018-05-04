@@ -1,7 +1,11 @@
 package com.reactnativeapp;
 
 import com.facebook.react.ReactActivity;
-
+// 引入文件
+import com.reactnativeapp.invokenative.ShareModule;
+import com.umeng.socialize.UMShareAPI;
+import android.content.Intent;
+import android.os.Bundle;
 public class MainActivity extends ReactActivity {
 
     /**
@@ -12,4 +16,22 @@ public class MainActivity extends ReactActivity {
     protected String getMainComponentName() {
         return "ReactNativeApp";
     }
+
+    //初始化代码
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+   super.onCreate(savedInstanceState);
+   ShareModule.initSocialSDK(this);
+  }
+
+  //回调所需代码
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+   super.onActivityResult(requestCode, resultCode, data);
+   UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+  }
+
+
+
+
 }

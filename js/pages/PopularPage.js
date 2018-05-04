@@ -14,6 +14,7 @@ import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-vi
 import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../common/NavigationBar'
 import RepositoryCell from '../common/RepositoryCell'
+import ShareUtil from '../common/ShareUtil';
 import DataRepository,{FLAG_STORAGE} from '../expand/dao/DataRepository'
 import LanguageDao,{FLAG_LANGUAGE} from "../expand/dao/LanguageDao"
 import FavoriteDao from "../expand/dao/FavoriteDao"
@@ -89,7 +90,8 @@ export default class PopularPage extends BaseComponent {
             MORE_MENU.Remove_Key,
             MORE_MENU.Custom_Theme,
             MORE_MENU.About_Author,
-            MORE_MENU.About]}
+            MORE_MENU.About,
+            MORE_MENU.Share]}
     anchorView={this.refs.moreMenuButton}
     onMoreMenuSelect={(e)=>{
       if(e===MORE_MENU.Custom_Theme){
