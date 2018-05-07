@@ -8,12 +8,14 @@ import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../common/NavigationBar'
 import HomePage from './HomePage'
 import ThemeDao from '../expand/dao/ThemeDao'
+import SplashScreen from 'react-native-splash-screen'
 export default class WelcomePage extends Component {
   componentDidMount(){
     new ThemeDao().getTheme().then((data)=>{
       this.theme = data;
     })
     this.timer = setTimeout(()=>{
+      SplashScreen.hide();
       this.props.navigator.resetTo({
             component:HomePage,
             params:{
@@ -26,11 +28,6 @@ export default class WelcomePage extends Component {
     this.timer&&clearTimeout(this.timer);
   }
   render(){
-    return <View>
-    <NavigationBar
-        title={'欢迎'}
-    />
-    <Text>欢迎</Text>
-    </View>
+    return null;
   }
 }

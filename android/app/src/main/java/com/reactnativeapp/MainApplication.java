@@ -2,12 +2,15 @@ package com.reactnativeapp;
 
 import com.reactnativeapp.invokenative.DplusReactPackage;
 import com.reactnativeapp.invokenative.RNUMConfigure;
+import com.umeng.socialize.PlatformConfig;
 import com.umeng.commonsdk.UMConfigure;
 
 
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.microsoft.codepush.react.CodePush;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -28,11 +31,16 @@ public class MainApplication extends Application implements ReactApplication {
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
-
+    @Override
+   protected String getJSBundleFile() {
+     return CodePush.getJSBundleFile();
+   }
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new CodePush(BuildConfig.CODEPUSH_KEY,MainApplication.this,BuildConfig.DEBUG),
+          new SplashScreenReactPackage(),
           new DplusReactPackage()
       );
     }
