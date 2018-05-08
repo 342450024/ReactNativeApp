@@ -118,9 +118,9 @@ import ShareUtil from './ShareUtil';
                }).catch(err => console.error('An error occurred', err));
              break;
              case MORE_MENU.Share:
-             ShareUtil.shareboard('豪哥出品','imgUrl','https://github.com/342450024/ReactNativeApp','this is Title.',[1,2],(code,message) =>{
-              Alert.alert('title', 'msg:' + message);
-             });
+             ShareUtil.shareboard('Check react-native umeng share sdk','imgUrl','https://github.com/ubbcou/blog/issues/18','this is Title.',[1,2],(code,message) =>{
+ Alert.alert('title', 'msg:' + message);
+});
                break;
 
      }

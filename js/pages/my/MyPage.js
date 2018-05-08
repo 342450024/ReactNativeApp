@@ -20,7 +20,6 @@ import {MORE_MENU} from '../../common/MoreMenu'
 import GlobalStyles from '../../../res/styles/GlobalStyles'
 import ViewUtils from '../../util/ViewUtils'
 import BaseComponent from '../BaseComponent'
-import codePush from 'react-native-code-push'
 export default class MyPage extends BaseComponent {
    constructor(props){
      super(props);
@@ -28,20 +27,6 @@ export default class MyPage extends BaseComponent {
        customThemeViewVisible:false,
        theme:this.props.theme
      }
-   }
-   update(){
-
-     codePush.sync({
-      updateDialog: {
-        appendReleaseDescription: true,
-        descriptionPrefix:'更新内容',
-        title:'更新',
-        mandatoryUpdateMessage:'',
-        mandatoryContinueButtonLabel:'更新',
-      },
-      mandatoryInstallMode:codePush.InstallMode.IMMEDIATE,
-
-    });
    }
    renderCustomThemeView(){
      return (<CustomThemePage
@@ -84,9 +69,6 @@ export default class MyPage extends BaseComponent {
         case MORE_MENU.About:
         TargetComponent = AboutPage;
           break;
-          case '更新':
-          this.update();
-            break;
 
     }
     if(TargetComponent){
@@ -98,7 +80,7 @@ export default class MyPage extends BaseComponent {
   }
   render(){
     let top = <NavigationBar title={'我的'} style={this.state.theme.styles.navBar}/>
-    return <View style={{backgroundColor:'blue'}}>
+    return <View style={GlobalStyles.root_container}>
          {top}
          <ScrollView>
          <TouchableHighlight
@@ -142,7 +124,6 @@ export default class MyPage extends BaseComponent {
           <View style={GlobalStyles.line}></View>
           {ViewUtils.getSettingItem(()=>this.itemClick(MORE_MENU.About_Author),require('./img/ic_insert_emoticon.png'),'关于作者',{tintColor:this.state.theme.themeColor})}
           <View style={GlobalStyles.line}></View>
-            {ViewUtils.getSettingItem(()=>this.itemClick('更新'),require('./img/ic_insert_emoticon.png'),'检测更新',{tintColor:this.state.theme.themeColor})}
          </ScrollView>
 
     {this.renderCustomThemeView()}
