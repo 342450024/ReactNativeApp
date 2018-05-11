@@ -18,7 +18,6 @@ const StatusBarShape = {
 }
 export default class NavigationBar extends Component{
        static propTypes = {
-         style:View.propTypes.style,
          title:PropTypes.string,
          titleView:PropTypes.element,
          hide:PropTypes.bool,
@@ -44,7 +43,7 @@ export default class NavigationBar extends Component{
          <StatusBar {...this.props.statusBar}/>
          </View>
          let titleView = this.props.titleView?this.props.titleView:
-         <Text style={styles.title}>{this.props.title}</Text>
+         <Text  numberOfLines={1} style={styles.title}>{this.props.title}</Text>
          let content = <View style={styles.navBar}>
          <View>
          {this.props.leftButton}
@@ -81,14 +80,14 @@ const styles = StyleSheet.create({
     alignItems:'center',
     position:'absolute',
     left:40,
-    right:40,
+    right:60,
     top:0,
     bottom:0,
 
   },
   title:{
     fontSize:20,
-    color:"#fff"
+    color:"#fff",
 
   },
   statusBar:{

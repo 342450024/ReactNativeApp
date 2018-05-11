@@ -18,6 +18,7 @@ import WebViewDetail from '../WebViewDetail'
 import FavoriteDao from "../../expand/dao/FavoriteDao"
 import RepositoryUtils from "../../expand/dao/RepositoryUtils"
 import {FLAG_STORAGE} from '../../expand/dao/DataRepository'
+import BackPressComponent from '../../common/BackPressComponent'
 export var FLAG_ABOUT = {flag_about:'about',flag_about_me:'about_me'};
 export default class AboutCommon{
   constructor(props,updateState,flag_about,config) {
@@ -29,6 +30,7 @@ export default class AboutCommon{
     this.favoriteKeys = null;
     this.favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
     this.repositoryUtils = new RepositoryUtils(this);
+    this.backPress=new BackPressComponent({backPress:(e)=>this.onBackPress(e)});
   }
   /**
    * 通知数据发生改变
@@ -36,7 +38,10 @@ export default class AboutCommon{
    onNotifyDataChanged(items){
        this.updateFavorite(items);
    }
-
+   onBackPress(e){
+     this.props.navigator.pop();
+     return true;
+   }
    componentDidMount(){
        if(this.flag_about==FLAG_ABOUT.flag_about){
           this.repositoryUtils.fetchRepository(this.config.info.currentRepoUrl);
@@ -48,6 +53,10 @@ export default class AboutCommon{
          }
          this.repositoryUtils.fetchRepositories(urls);
        }
+       this.backPress.componentDidMount();
+   }
+   componentWillUnmount(){
+     this.backPress.componentWillUnmount();
    }
    /**
     * 更新项目的用户收藏状态

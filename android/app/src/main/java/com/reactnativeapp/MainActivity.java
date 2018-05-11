@@ -21,7 +21,7 @@ public class MainActivity extends ReactActivity {
     //初始化代码
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    SplashScreen.show(this);//显示启动屏
+    SplashScreen.show(this,true);//显示启动屏
    super.onCreate(savedInstanceState);
    ShareModule.initSocialSDK(this);
   }

@@ -42,7 +42,7 @@ import ShareUtil from './ShareUtil';
      }
    }
    static propTypes={
-     contentStyle:View.propTypes.style,
+
      menus:PropTypes.array,
      anchorView:PropTypes.object,
    }
@@ -118,7 +118,7 @@ import ShareUtil from './ShareUtil';
                }).catch(err => console.error('An error occurred', err));
              break;
              case MORE_MENU.Share:
-             ShareUtil.shareboard('Check react-native umeng share sdk','imgUrl','https://github.com/ubbcou/blog/issues/18','this is Title.',[1,2],(code,message) =>{
+             ShareUtil.shareboard('美男子出品','imgUrl','https://github.com/342450024/','爱我，你怕了吗？',[1,2],(code,message) =>{
  Alert.alert('title', 'msg:' + message);
 });
                break;

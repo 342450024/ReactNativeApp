@@ -16,9 +16,11 @@ import ViewUtils from '../../util/ViewUtils'
 import LanguageDao,{FLAG_LANGUAGE} from "../../expand/dao/LanguageDao"
 import CheckBox from 'react-native-check-box';
 import ArrayUtils from '../../util/ArrayUtils';
+import BackPressComponent from '../../common/BackPressComponent'
 export default class CustomKeyPage extends Component {
   constructor(props){
      super(props);
+     this.backPress=new BackPressComponent({backPress:(e)=>this.onBackPress(e)});
      this.languageDao = new LanguageDao(this.props.flag);
      this.chanageValues = [];
      this.isRemoveKey = this.props.isRemoveKey?true:false;
@@ -27,8 +29,17 @@ export default class CustomKeyPage extends Component {
        theme:this.props.theme
      }
   }
+  onBackPress(e){
+    this.onBack();
+    return true;
+  }
+
+  componentWillUnmount(){
+    this.backPress.componentWillUnmount();
+  }
   componentDidMount(){
     this.loadData();
+    this.backPress.componentDidMount();
   }
 
   loadData(){
@@ -105,7 +116,7 @@ export default class CustomKeyPage extends Component {
         isChecked={isChecked}
         checkedImage={<Image source={require('../../pages/my/img/ic_check_box.png')} style={this.props.theme.styles.tabBarSelectedIcon}/>}
         unCheckedImage={<Image source={require('../../pages/my/img/ic_check_box_outline_blank.png')} style={this.props.theme.styles.tabBarSelectedIcon}/>}
-  
+
       />
     )
   }

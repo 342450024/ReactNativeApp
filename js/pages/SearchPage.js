@@ -23,6 +23,7 @@ import GlobalStyles from '../../res/styles/GlobalStyles'
 import MakeCancelable from '../util/Cancelable'
 import WebViewDetail from './WebViewDetail'
 import Utils from '../util/utils'
+import BackPressComponent from '../common/BackPressComponent'
 import ProjectModel from '../model/ProjectModel'
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
@@ -30,6 +31,7 @@ var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 export default class SearchPage extends Component {
   constructor(props){
     super(props);
+    this.backPress=new BackPressComponent({backPress:(e)=>this.onBackPress(e)});
     this.languageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
     this.keys=[];
     this.isKeyChange=false;
@@ -43,12 +45,15 @@ export default class SearchPage extends Component {
       theme:this.props.theme
     }
   }
-  componentDidMount() {
 
-      this.initKeys();
+
+  componentDidMount(){
+    this.initKeys();
+    this.backPress.componentDidMount();
   }
 
   componentWillUnmount(){
+    this.backPress.componentWillUnmount();
     if(this.isKeyChange){
          DeviceEventEmitter.emit('ACTION_HOME',ACTION_HOME.A_RESTART);
     }
@@ -177,6 +182,7 @@ getFetchUrl(key){
 onBackPress(){
   this.refs.input.blur();
  this.props.navigator.pop();
+ return true;
 }
 updateState(dic){
    this.setState(dic)

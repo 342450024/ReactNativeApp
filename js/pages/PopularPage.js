@@ -108,7 +108,7 @@ export default class PopularPage extends BaseComponent {
       />)
   }
   render(){
-    let statusBar = {backgroundColor:this.state.theme.themeColor};
+    let statusBar = {backgroundColor:this.state.theme.themeColor,barStyle:'light-content'};
     let content=this.state.languages.length>0?<ScrollableTabView
     tabBarBackgroundColor={this.state.theme.themeColor}
     tabBarInactiveTextColor='mintcream'

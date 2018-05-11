@@ -16,10 +16,12 @@ import CustomKeyPage from './CustomKeyPage'
 import ArrayUtils from '../../util/ArrayUtils';
 import ViewUtils from '../../util/ViewUtils'
 import SortableListView from 'react-native-sortable-listview';
+import BackPressComponent from '../../common/BackPressComponent'
 import LanguageDao,{FLAG_LANGUAGE} from "../../expand/dao/LanguageDao"
 export default class SortKeyPage extends Component {
   constructor(Props){
     super(Props);
+    this.backPress=new BackPressComponent({backPress:(e)=>this.onBackPress(e)});
     this.languageDao = new LanguageDao(this.props.flag);
     this.dataArray=[];
     this.sortResultArray=[];
@@ -29,9 +31,20 @@ export default class SortKeyPage extends Component {
       theme:this.props.theme
     }
   }
+
+  onBackPress(e){
+    this.onBack();
+    return true;
+  }
+
+  componentWillUnmount(){
+    this.backPress.componentWillUnmount();
+  }
   componentDidMount(){
     this.loadData();
+    this.backPress.componentDidMount();
   }
+
   loadData(){
     this.languageDao.fetch()
         .then(result=>{

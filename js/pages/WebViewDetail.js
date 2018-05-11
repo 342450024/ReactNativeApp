@@ -10,6 +10,7 @@ import {
 import {Navigator} from 'react-native-deprecated-custom-components';
 import NavigationBar from '../common/NavigationBar'
 import ViewUtils from '../util/ViewUtils'
+import BackPressComponent from '../common/BackPressComponent'
 const TRENDING_URL = 'https://github.com/';
 const URL = 'https://www.baidu.com/';
 import FavoriteDao from "../expand/dao/FavoriteDao"
@@ -17,6 +18,7 @@ import FavoriteDao from "../expand/dao/FavoriteDao"
 export default class WebViewDetail extends Component {
   constructor(props){
     super(props);
+    this.backPress=new BackPressComponent({backPress:(e)=>this.onBackPress(e)});
     this.url = this.props.item.item.html_url?this.props.item.item.html_url:TRENDING_URL+this.props.item.item.fullName;
     let title = this.props.item.item.full_name?this.props.item.item.full_name:this.props.item.item.fullName;
     this.favoriteDao = new FavoriteDao(this.props.flag);
@@ -29,8 +31,15 @@ export default class WebViewDetail extends Component {
       favoriteIcon:this.props.item.isFavorite?require('../../res/images/ic_star.png'):require('../../res/images/ic_star_navbar.png')
     }
   }
+  onBackPress(e){
+    this.onBack();
+    return true;
+  }
   componentDidMount(){
-     alert(this.props.item.isFavorite)
+     this.backPress.componentDidMount();
+  }
+  componentWillUnmount(){
+    this.backPress.componentWillUnmount();
   }
 
   onBack(){

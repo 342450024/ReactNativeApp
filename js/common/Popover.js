@@ -38,7 +38,6 @@ export default class Popover extends Component{
    static propTypes = {
     isVisible: PropTypes.bool,
     onClose: PropTypes.func,
-    contentStyle:View.propTypes.style,
   }
   constructor(props){
     super(props);
